@@ -1,21 +1,34 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FaSun, FaMoon } from "react-icons/fa";
-import { toggleTheme } from "../utils/themeSlice"; 
+import { toggleTheme } from "../utils/themeSlice";
+import axios from "axios";
+import { BASE_URL } from "../utils/Constant";
 
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((store) => store.user);
   const theme = useSelector((store) => store.theme.theme);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   };
 
   const handleThemeToggle = () => {
     dispatch(toggleTheme());
+  };
+
+  const handleLogOut = async () => {
+    try {
+      await axios.post(`${BASE_URL}/logout`);
+      localStorage.removeItem("token");
+      navigate("/login"); // Redirect after logout
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -33,7 +46,6 @@ const Nav = () => {
 
         {/* Right Side Controls */}
         <div className="flex items-center gap-4">
-          {/* Theme Toggle Button */}
           <button
             onClick={handleThemeToggle}
             className="text-xl focus:outline-none transition-colors"
@@ -42,7 +54,6 @@ const Nav = () => {
             {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-800" />}
           </button>
 
-          {/* User Image Toggle */}
           <button onClick={toggleMenu} className="relative z-10">
             <img
               src={user?.photoUrl || "https://via.placeholder.com/40"}
@@ -57,43 +68,23 @@ const Nav = () => {
       {isOpen && (
         <div className={`${theme === "dark" ? "bg-black text-white" : "bg-white text-black"} absolute right-0 top-full w-64 shadow-xl rounded-bl-lg border-l border-b border-yellow-400 z-50`}>
           <div className="flex flex-col items-start p-4 gap-3">
-            <Link 
-              to="/about" 
-              onClick={toggleMenu} 
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
+            <Link to="/about" className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors">
               About
             </Link>
-            <Link 
-              to="/content" 
-              onClick={toggleMenu} 
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
+            <Link to="/content" className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors">
               Content
             </Link>
-            <Link 
-              to="/profile" 
-              onClick={toggleMenu} 
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
+            <Link to="/profile" className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors">
               Profile
             </Link>
-            <Link 
-              to="/update-profile" 
-              onClick={toggleMenu} 
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
+            <Link to="/update-profile" className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors">
               Update Profile
             </Link>
-            <Link 
-              to="/more" 
-              onClick={toggleMenu} 
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
+            <Link to="/more" className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors">
               More
             </Link>
-            <button 
-              onClick={toggleMenu}
+            <button
+              onClick={handleLogOut}
               className="w-full text-left py-2 px-4 bg-red-600 hover:bg-red-700 rounded-md text-white transition-colors"
             >
               Logout

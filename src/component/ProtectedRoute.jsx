@@ -44,7 +44,7 @@ const ProtectedRoute = ({ children }) => {
           fetchUser(); // Don't forget to call the async function
         } else {
           // Token not found, redirect to login
-          navigate("/login");
+          navigate("/");
         }
       }, [dispatch, navigate ]);
   
