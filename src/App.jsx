@@ -1,13 +1,13 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Provider, useSelector } from 'react-redux';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Provider, useSelector } from "react-redux";
+import "./App.css";
 
-import Login from './component/Login';
-import PreHandler from './prelogin/PreHandler';
-import Feed from './component/Feed';
-import Body from './component/Body';
-import ProtectedRoute from './component/ProtectedRoute'; 
-import appStore from './utils/appStore';
+import Login from "./component/Login";
+import PreHandler from "./prelogin/PreHandler";
+import Feed from "./component/Feed";
+import Body from "./component/Body";
+import ProtectedRoute from "./component/ProtectedRoute";
+import appStore from "./utils/appStore";
 
 function App() {
   // const theme = useSelector((store)=>store.theme.theme)
@@ -19,18 +19,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={ <PreHandler/>} />
-          <Route path="/login" element={ <Login />} />
+          <Route path="/" element={<PreHandler />} />
+          <Route path="/login" element={<Login />} />
 
           {/* Protected Route */}
-          <Route 
-            path="/app" 
-            element={
-              <ProtectedRoute>
-                <Body />
-              </ProtectedRoute>
-            }
-          >
+          <Route path="/app" element={<Body />}>
             <Route index element={<Feed />} />
           </Route>
         </Routes>
