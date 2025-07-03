@@ -13,6 +13,8 @@ const Nav = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  console.log(user)
+
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
   };
@@ -56,7 +58,7 @@ const Nav = () => {
 
           <button onClick={toggleMenu} className="relative z-10">
             <img
-              src={user?.photoUrl || "https://via.placeholder.com/40"}
+              src={user?.user?.photoUrl || user?.photoUrl ||"https://via.placeholder.com/40"}
               alt="User"
               className="w-10 h-10 rounded-full border-2 border-yellow-400 object-cover"
             />

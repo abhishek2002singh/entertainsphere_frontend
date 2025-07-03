@@ -19,16 +19,16 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={ <PreHandler/>} />
-          <Route path="/login" element={ <Login />} />
+          <Route path="/" element={ <ProtectedRoute><PreHandler/></ProtectedRoute> } />
+          <Route path="/login" element={<Login /> } />
 
           {/* Protected Route */}
           <Route 
             path="/app" 
             element={
-              <ProtectedRoute>
+             
                 <Body />
-              </ProtectedRoute>
+            
             }
           >
             <Route index element={<Feed />} />

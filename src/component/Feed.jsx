@@ -4,9 +4,12 @@ import axios from 'axios';
 import { BASE_URL } from '../utils/Constant';
 import { apiPath } from '../utils/path';
 import ShortsCard from './ShortsCard';
+import { addUser } from '../utils/userSlice';
+import { useDispatch } from 'react-redux';
 
 const Feed = () => {
   const [shorts, setShorts] = useState([]);
+  const dispatch = useDispatch()
 
   const fetchShortsData = async () => {
     try {
@@ -19,9 +22,26 @@ const Feed = () => {
       console.error('Error fetching shorts:', err);
     }
   };
+
+  const loggedUserInformation = async() =>{
+    try{
+     
+      const res = await axios.get(`${BASE_URL}/me`, {
+           
+            withCredentials: true,
+          });
+
+          dispatch(addUser(res?.data));
+
+    }catch(error){
+      console.error(error)
+
+    }
+  }
  
 
   useEffect(() => {
+    loggedUserInformation()
     fetchShortsData();
   }, []);
 
