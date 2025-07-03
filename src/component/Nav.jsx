@@ -7,17 +7,24 @@ import { IoIosSearch } from "react-icons/io";
 import { toggleTheme } from "../utils/themeSlice";
 import axios from "axios";
 import { BASE_URL } from "../utils/Constant";
-
+import { toggleMenus } from '../utils/appSlice';
+;
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((store) => store.user);
   const theme = useSelector((store) => store.theme.theme);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [hamOpen, setHamOpen] = useState(false);
-  const toggleHamburger = () => {
-    setHamOpen(!hamOpen);
-  };
+ 
+  //const [hamOpen, setHamOpen] = useState(false);
+//   const togglemenuhandler = () => {
+//     setHamOpen(!hamOpen);
+//   };
+
+const togglemenuhandler=()=>{
+    dispatch(toggleMenus());
+}
+
 
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
@@ -100,14 +107,14 @@ const Nav = () => {
     <nav
       className={`${
         theme === "dark" ? "bg-black text-white" : "bg-white text-black"
-      } shadow-lg relative`}
+      } shadow-lg fixed top-0 left-0 right-0 z-50  px-3 `}
     >
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3">
         {/* Logo & Hamburger */}
         <div className="flex items-center gap-3">
           <RxHamburgerMenu
-            onClick={toggleHamburger}
+        onClick={()=>togglemenuhandler()}
             className="text-2xl md:text-3xl cursor-pointer"
           />
           <img
@@ -215,23 +222,16 @@ const Nav = () => {
           </div>
         </div>
       )}
+
       {/* hamburger dropdown menu */}
-      <div
-        className={`absolute top-15 flex left-0 z-10 overflow-y-hidden  h-[100vh] transition-all  duration-200  ease-in-out ${
-          hamOpen ? "w-[99vw]" : "w-[0px]"
-        }`}
-      >
-        <div className="w-[50%] bg-black  h-full md:w-[20%] ">
-          {/* hamburger and logo */}
-         
-          
-        
-        </div>
-        <div
-          onClick={() => setHamOpen(!hamOpen)}
-          className="bg-[#c4c4c428] w-[50%] h-full md:w-[80%]"
-        ></div>
-      </div>
+      {/* <div
+  className={`fixed top-0 left-0 h-full bg-gray-900 text-white z-40 transition-all duration-300 ease-in-out ${
+    isMenuOpen ? "w-80" : "w-0 overflow-hidden"
+  }`}
+>
+
+</div> */}
+
     </nav>
   );
 };
