@@ -147,7 +147,7 @@ const ShortsCard = ({ short, active }) => {
   };
 
   return (
-    <div className="relative h-screen w-full flex items-center justify-center bg-black overflow-hidden">
+    <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">
       {/* Video Wrapper */}
       <div
         className="relative w-full sm:w-[40%] h-full mx-auto cursor-pointer"

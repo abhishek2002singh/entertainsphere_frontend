@@ -75,7 +75,7 @@ const Feed = () => {
           Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
         const percentVisible = visibleHeight / window.innerHeight;
 
-        if (percentVisible > 0.7) {
+        if (percentVisible > 0.75) {
           setActiveIndex(index);
         }
       });
@@ -88,7 +88,7 @@ const Feed = () => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen overflow-y-scroll   snap-y snap-mandatory bg-black"
+      className="min-h-screen overflow-y-scroll   snap-y snap-mandatory no-scrollbar"
     >
       {shorts.map((short, index) => (
         <div key={short._id} className="min-h-screen  snap-start short-item">
