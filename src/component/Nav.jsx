@@ -1,26 +1,61 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { FaSun, FaMoon } from "react-icons/fa";
+import { FaSun, FaMoon ,FaSearch} from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoIosSearch } from "react-icons/io";
 import { toggleTheme } from "../utils/themeSlice";
 import axios from "axios";
 import { BASE_URL } from "../utils/Constant";
 import { toggleMenus } from '../utils/appSlice';
-;
-const Nav = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const user = useSelector((store) => store.user);
-  const theme = useSelector((store) => store.theme.theme);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
- 
-  //const [hamOpen, setHamOpen] = useState(false);
-//   const togglemenuhandler = () => {
-//     setHamOpen(!hamOpen);
-//   };
+import { cacheResults } from '../utils/searchSlice';
+import { YOUTUBE_SEARCH_API } from '../utils/Constant';
 
+const Nav = () => {
+
+const [isOpen, setIsOpen] = useState(false);
+const[searchQuery,setSearchQuery]=useState("");
+const [suggestion ,setSuggestions]=useState([]);
+const[showSuggestions,setShowSuggestions]=useState(false);
+const searchCache = useSelector((store)=>store.search)
+
+const user = useSelector((store) => store.user);
+const theme = useSelector((store) => store.theme.theme); 
+const dispatch = useDispatch();
+const navigate = useNavigate();
+ 
+ useEffect(()=>{
+        const timer = setTimeout(()=>
+        {
+            if(searchCache[searchQuery]){
+                setSuggestions(searchCache[searchQuery])
+            }
+            else{
+                getSearchSuggesstions()
+            }
+        } ,200)
+
+        return ()=>{
+            clearTimeout(timer);
+        }
+         
+    },[searchQuery]);
+
+    const getSearchSuggesstions = async ()=>{
+     console.log("api call-"+searchQuery)
+        const data= await fetch(YOUTUBE_SEARCH_API+searchQuery)
+        const json = await data.json();
+        console.log(json[1]);
+        setSuggestions(json[1]);
+
+        //update the cache
+        dispatch(
+            cacheResults({
+                [searchQuery]:json[1],
+             
+            })
+        );
+    }
 const togglemenuhandler=()=>{
     dispatch(toggleMenus());
 }
@@ -47,7 +82,305 @@ const togglemenuhandler=()=>{
   };
 
   return (
-    // <nav
+    
+//     <nav
+
+//         className={`${
+//         theme === "dark" ? "bg-blue-700 text-white" : "bg-white text-black "
+//         } shadow-lg fixed top-0 left-0 right-0 z-50   `}
+//     >
+//       {/* Top bar */}
+//        <div className="flex items-center justify-between px-4 py-3">
+
+//             {/* Logo & Hamburger */}
+//             <div className="flex items-center gap-4 w-3/12">
+//             <RxHamburgerMenu
+//                 onClick={()=>togglemenuhandler()}
+//                 className=" text-2xl cursor-pointer  hover:bg-blue-800"  
+//             />
+//             <img
+//                 src="https://www.sphereentertainmentco.com/wp-content/uploads/2023/06/Sphere2023-CorpSite-TopNav-Logo-w-Padding.png"
+//                 alt="EntertainSphere Logo"
+//                 className="h-10 w-auto rounded "
+//             />
+//             </div>
+
+//             {/*  Search Bar */}
+//             <div className="w-9/12 px-5  relative">
+//                 <div className="flex  justify-center items-center">
+//                     <input
+//                         type="text"
+//                         placeholder="Search......"
+//                         value={searchQuery}
+//                          onChange={(e) => setSearchQuery(e.target.value)}
+//                         onFocus={() => setShowSuggestions(true)}
+//                         onBlur={() => setShowSuggestions(false)}
+//                         onKeyDown={(e) => {
+//                             if (e.key === 'Enter' && searchQuery.trim() !== '') {
+//                                 setShowSuggestions(false);
+//                                 navigate(`/app/results?q=${searchQuery}`);
+//                             }
+//                         }}
+//                         className="w-[50%] border border-gray-300 pl-4 p-2 rounded-l-full bg-white text-black text-opacity-30"
+//                     />
+//                     <button className="bg-gray-200 px-7 text-white flex items-center justify-center py-2.5 rounded-r-full border border-gray-300 hover:bg-pink-200">
+//                         <IoIosSearch size={20} className=" text-black  "/>
+//                     </button>
+//                 </div>
+//                 {showSuggestions&&(
+//                     <div className= 'absolute top-11 bg-white py-2 px-2 w-1/2  shadow-lg rounded-lg border border-gray-100 text-black '>
+//                         <ul className=''>
+//                         {suggestion.map((s)=>(<li key={s} className='flex items-center gap-4 py-2 px-3 shadow-sm hover:bg-gray-100'
+//                             onMouseDown={() => navigate(`/app/results?q=${s}`)} >
+//                             <FaSearch size={20} className='text-gray-300'/>  {s}</li>))}  
+//                         </ul>
+//                     </div>
+//                 )}
+//             </div>
+        
+
+//             {/* Right side buttons */}
+//             <div className="flex items-center gap-6 w-1/12 justify-evenly">
+//                 <button
+//                     onClick={handleThemeToggle}
+//                     className="text-xl"
+//                     aria-label="Toggle Theme"
+//                 >
+//                     {theme === "dark" ? (
+//                     <FaSun className="text-yellow-400" />
+//                     ) : (
+//                     <FaMoon className="text-gray-800" />
+//                     )}
+//                 </button>
+//                 <button onClick={toggleMenu} >
+//                     <img
+//                     src={user?.user?.photoUrl ||user?.photoUrl || "https://via.placeholder.com/40"}
+//                     alt="User"
+//                     className="w-10 h-10 rounded-full border-2 border-yellow-400 object-cover "
+//                     />
+//                 </button>
+//             </div>
+//        </div>
+
+
+//         {/* Mobile Dropdown Menu */}
+//         {isOpen && (
+//             <div
+//             className={`${
+//                 theme === "dark" ? "bg-black text-white" : "bg-white text-black"
+//             } absolute right-0 top-full w-64 shadow-xl rounded-bl-lg border-l border-b border-yellow-400 z-50`}
+//             >
+//             <div className="flex flex-col items-start p-4 gap-3">
+//                 <Link
+//                 to="/about"
+//                 className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
+//                 >
+//                 About
+//                 </Link>
+//                 <Link
+//                 to="/content"
+//                 className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
+//                 >
+//                 Content
+//                 </Link>
+//                 <Link
+//                 to="/profile"
+//                 className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
+//                 >
+//                 Profile
+//                 </Link>
+//                 <Link
+//                 to="/update-profile"
+//                 className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
+//                 >
+//                 Update Profile
+//                 </Link>
+//                 <Link
+//                 to="/more"
+//                 className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
+//                 >
+//                 More
+//                 </Link>
+//                 <button
+//                 onClick={handleLogOut}
+//                 className="w-full text-left py-2 px-4 bg-red-600 hover:bg-red-700 rounded-md text-white transition-colors"
+//                 >
+//                 Logout
+//                 </button>
+//             </div>
+//             </div>
+//         )}
+
+//             {/* hamburger dropdown menu */}
+//             {/* <div
+//         className={`fixed top-0 left-0 h-full bg-gray-900 text-white z-40 transition-all duration-300 ease-in-out ${
+//             isMenuOpen ? "w-80" : "w-0 overflow-hidden"
+//         }`}
+//         >
+
+//         </div> */}
+
+//     </nav>
+//   );
+
+  
+    <>
+      <nav
+        className={`${
+          theme === "dark" ? "bg-blue-700 text-white" : "bg-white text-black"
+        } shadow-lg fixed top-0 left-0 right-0 z-50`}
+      >
+        <div className="flex items-center justify-between px-2 sm:px-4 py-3">
+          {/* Left section - Hamburger & Logo */}
+          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+            <RxHamburgerMenu
+              onClick={() => togglemenuhandler()} // 
+              className="text-2xl cursor-pointer hover:bg-blue-800"
+            />
+            <img
+              src="https://www.sphereentertainmentco.com/wp-content/uploads/2023/06/Sphere2023-CorpSite-TopNav-Logo-w-Padding.png"
+              alt="EntertainSphere Logo"
+              className="h-8 md:h-10 w-auto rounded"
+            />
+          </div>
+
+          {/* Desktop Search Bar - now properly responsive */}
+          <div className="hidden sm:flex flex-grow mx-2 md:mx-4 px-2 relative max-w-2xl">
+            <div className="flex w-full">
+              <input
+                type="text"
+                placeholder="Search......"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setShowSuggestions(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchQuery.trim() !== '') {
+                    setShowSuggestions(false);
+                    navigate(`/app/results?q=${searchQuery}`);
+                  }
+                }}
+                className="w-full border border-gray-300 pl-4 p-2 rounded-l-full bg-white text-black"
+              />
+              <button className="bg-gray-200 px-4 text-white flex items-center justify-center py-2.5 rounded-r-full border border-gray-300 hover:bg-pink-200">
+                <IoIosSearch size={20} className="text-black"/>
+              </button>
+            </div>
+            {showSuggestions && (
+              <div className='absolute top-11 bg-white py-2 px-2 w-full shadow-lg rounded-lg border border-gray-100 text-black z-50'>
+                <ul>
+                  {suggestion.map((s) => (
+                    <li 
+                      key={s} 
+                      className='flex items-center gap-2 py-2 px-3 shadow-sm hover:bg-gray-100'
+                      onMouseDown={() => navigate(`/app/results?q=${s}`)}
+                    >
+                      <FaSearch size={16} className='text-gray-300'/> 
+                      <span className="truncate">{s}</span>
+                    </li>
+                  ))}  
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Right section - Theme & Profile */}
+          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+            <button
+              onClick={handleThemeToggle}
+              className="text-xl"
+              aria-label="Toggle Theme"
+            >
+              {theme === "dark" ? (
+                <FaSun className="text-yellow-400" />
+              ) : (
+                <FaMoon className="text-gray-800" />
+              )}
+            </button>
+            <button onClick={toggleMenu}>
+              <img
+                src={user?.user?.photoUrl || user?.photoUrl || "https://via.placeholder.com/40"}
+                alt="User"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-yellow-400 object-cover"
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Search Bar - appears below nav */}
+        <div className="sm:hidden px-4 pb-3">
+          <div className="flex">
+            <input
+              type="text"
+              placeholder="Search......"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setShowSuggestions(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && searchQuery.trim() !== '') {
+                  setShowSuggestions(false);
+                  navigate(`/app/results?q=${searchQuery}`);
+                }
+              }}
+              className="w-full border border-gray-300 pl-4 p-2 rounded-l-full bg-white text-black"
+            />
+            <button className="bg-gray-200 px-4 text-white flex items-center justify-center py-2.5 rounded-r-full border border-gray-300 hover:bg-pink-200">
+              <IoIosSearch size={20} className="text-black"/>
+            </button>
+          </div>
+          {showSuggestions && (
+            <div className='absolute bg-white py-2 px-2 w-[calc(100%-3rem)] shadow-lg rounded-lg border border-gray-100 text-black z-50'>
+              <ul>
+                {suggestion.map((s) => (
+                  <li 
+                    key={s} 
+                    className='flex items-center gap-2 py-2 px-3 shadow-sm hover:bg-gray-100'
+                    onMouseDown={() => navigate(`/app/results?q=${s}`)}
+                  >
+                    <FaSearch size={16} className='text-gray-300'/> 
+                    <span className="truncate">{s}</span>
+                  </li>
+                ))}  
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Dropdown Menu */}
+        {isOpen && (
+          <div
+            className={`${
+              theme === "dark" ? "bg-black text-white" : "bg-white text-black"
+            } sm:hidden absolute right-0 top-full w-48 shadow-xl rounded-bl-lg border-l border-b border-yellow-400 z-50`}
+          >
+            <div className="flex flex-col items-start p-2 gap-2">
+              <Link
+                to="/about"
+                className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
+              >
+                About
+              </Link>
+              {/* Other menu items */}
+              <button
+                onClick={handleLogOut}
+                className="w-full text-left py-2 px-4 bg-red-600 hover:bg-red-700 rounded-md text-white transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      
+    </>
+  );
+};
+
+
+export default Nav;
+// <nav
     //   className={`${
     //     theme === "dark" ? "bg-black text-white" : "bg-white text-black"
     //   } shadow-lg relative`}
@@ -106,136 +439,3 @@ const togglemenuhandler=()=>{
     //       </button>
     //     </div>
     //   </div>
-    <nav
-      className={`${
-        theme === "dark" ? "bg-black text-white" : "bg-white text-black"
-      } shadow-lg fixed top-0 left-0 right-0 z-50  px-3 `}
-    >
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-3">
-        {/* Logo & Hamburger */}
-        <div className="flex items-center gap-3">
-          <RxHamburgerMenu
-        onClick={()=>togglemenuhandler()}
-            className="text-2xl md:text-3xl cursor-pointer"
-          />
-          <img
-            src="https://www.sphereentertainmentco.com/wp-content/uploads/2023/06/Sphere2023-CorpSite-TopNav-Logo-w-Padding.png"
-            alt="EntertainSphere Logo"
-            className="h-10 w-auto rounded bg-black"
-          />
-        </div>
-
-        {/* Desktop Search Bar */}
-        <div className="hidden md:flex bg-transparent border basis-[650px] rounded-full h-10">
-          <div className="flex w-full border border-white rounded-full overflow-hidden">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full px-3 outline-none text-black"
-            />
-            <button className="bg-[#232121] px-4 text-white flex items-center justify-center">
-              <IoIosSearch />
-            </button>
-          </div>
-        </div>
-
-        {/* Right side buttons */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleThemeToggle}
-            className="text-xl"
-            aria-label="Toggle Theme"
-          >
-            {theme === "dark" ? (
-              <FaSun className="text-yellow-400" />
-            ) : (
-              <FaMoon className="text-gray-800" />
-            )}
-          </button>
-          <button onClick={toggleMenu}>
-            <img
-              src={user?.user?.photoUrl || user?.photoUrl ||"https://via.placeholder.com/40"}
-              alt="User"
-              className="w-10 h-10 rounded-full border-2 border-yellow-400 object-cover"
-            />
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Search Bar - Second Line */}
-      <div className="md:hidden px-4 pb-2">
-        <div className="flex w-full border rounded-full overflow-hidden h-10">
-          <input
-            type="text"
-            placeholder="Search"
-            className="flex-grow px-4 outline-none text-black"
-          />
-          <button className="bg-[#232121] px-4 text-white flex items-center justify-center">
-            <IoIosSearch />
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Dropdown Menu */}
-      {isOpen && (
-        <div
-          className={`${
-            theme === "dark" ? "bg-black text-white" : "bg-white text-black"
-          } absolute right-0 top-full w-64 shadow-xl rounded-bl-lg border-l border-b border-yellow-400 z-50`}
-        >
-          <div className="flex flex-col items-start p-4 gap-3">
-            <Link
-              to="/about"
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              to="/content"
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
-              Content
-            </Link>
-            <Link
-              to="/profile"
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
-              Profile
-            </Link>
-            <Link
-              to="/update-profile"
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
-              Update Profile
-            </Link>
-            <Link
-              to="/more"
-              className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            >
-              More
-            </Link>
-            <button
-              onClick={handleLogOut}
-              className="w-full text-left py-2 px-4 bg-red-600 hover:bg-red-700 rounded-md text-white transition-colors"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* hamburger dropdown menu */}
-      {/* <div
-  className={`fixed top-0 left-0 h-full bg-gray-900 text-white z-40 transition-all duration-300 ease-in-out ${
-    isMenuOpen ? "w-80" : "w-0 overflow-hidden"
-  }`}
->
-
-</div> */}
-
-    </nav>
-  );
-};
-
-export default Nav;

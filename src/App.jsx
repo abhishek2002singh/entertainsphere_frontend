@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Provider, useSelector } from "react-redux";
+import { Provider} from "react-redux";
 import "./App.css";
-
+import WatchPage from "./component/WatchPage"
+import SearchResultPage from "./component/SearchResultPage"
 import Login from "./component/Login";
 import PreHandler from "./prelogin/PreHandler";
 import Feed from "./component/Feed";
@@ -32,6 +33,8 @@ function App() {
             }
           >
             <Route index element={<Feed />} />
+            <Route path="watch" element={<WatchPage />} />
+            <Route path="results" element={<SearchResultPage/>} />
           </Route>
         </Routes>
       </BrowserRouter>
