@@ -1,165 +1,117 @@
-
-import React, { useEffect } from 'react';
-import { FaFilm, FaFire, FaGamepad, FaHome, FaNewspaper, FaPodcast, FaThumbsUp, FaVideo } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import {
+  FaFilm, FaFire, FaGamepad, FaHome,
+  FaNewspaper, FaPodcast, FaThumbsUp, FaVideo
+} from 'react-icons/fa';
 import { MdLiveTv, MdSchool, MdSportsEsports } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { closeMenu} from '../utils/appSlice';
+import { closeMenu,  } from '../utils/appSlice';
 
 const SideBar = () => {
-   const dispatch = useDispatch()
-   const isMenuOpen = useSelector((state) => state.app.isMenuOpen);
-   
-   useEffect(() => {
+  const dispatch = useDispatch();
+  const isMenuOpen = useSelector((state) => state.app.isMenuOpen);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  const isMobile = windowWidth < 768;
+  const isMedium = windowWidth >= 768 && windowWidth < 1300;
+  const isDesktop = windowWidth >= 1300;
+
+  useEffect(() => {
     const handleResize = () => {
-    if (window.innerWidth < 800 && isMenuOpen) {
-      dispatch(closeMenu());
-    }
+      setWindowWidth(window.innerWidth);
+
+      // Auto-close on mobile resize
+      if (window.innerWidth < 768 && isMenuOpen) {
+        dispatch(closeMenu());
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [dispatch, isMenuOpen]);
+
+  const getItemClass = () => 'flex-row items-center '; // Always column layout for desktop compact
+
+  const shouldShowText = () =>
+    isMobile || isMenuOpen || isDesktop;
+
+  const renderMenuItems = (items) =>
+    items.map((item) => (
+      <Link to={item.path} key={item.text}>
+        <li className={`flex ${getItemClass()} py-2 px-4 hover:bg-gray-200 rounded-md cursor-pointer`}>
+          <span className="mb-1">{item.icon}</span>
+          {shouldShowText() && <span className="text-xl text-center pl-5">{item.text}</span>}
+        </li>
+      </Link>
+    ));
+
+  // Determine sidebar width based on screen and toggle
+  const getSidebarWidth = () => {
+    if (isMobile) return isMenuOpen ? 'w-64' : '-translate-x-full';
+    if (isMedium) return isMenuOpen ? 'w-64' : 'w-20';
+    if (isDesktop) return isMenuOpen ? 'w-64' : 'w-24'; // default compact desktop
+    return 'w-24';
   };
-
-  window.addEventListener('resize', handleResize);
-
-  // Initial check
-  handleResize();
-
-  return () => {
-    window.removeEventListener('resize', handleResize);
-  };
-}, [dispatch, isMenuOpen]);
-
-  if (!isMenuOpen) return null;
 
   return (
-    <div className=' py-2 left-0 h-[calc(100vh-4rem)] w-full max-w-[200px] md:w-64 overflow-y-auto bg-white shadow-lg z-30 no-scrollbar'>
-      <div className="px-2 mb-2">
-        <ul >
-          {/* Each link is flex row on md+ and flex-col (icon above text) on smaller */}
-          <Link to="/">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaHome size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Home</span>
-            </li>
-          </Link>
+    <>
+      {/* Mobile overlay */}
+      {isMobile && isMenuOpen && (
+        <div
+          className="fixed inset-0  z-40"
+          onClick={() => dispatch(closeMenu())}
+        />
+      )}
 
-          <Link to="/shorts">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer  px-4">
-              <FaFire size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Shorts</span>
-            </li>
-          </Link>
+      {/* Sidebar */}
+      <div className={`
+        fixed top-16 left-0
+        h-[calc(100vh-4rem)]
+        py-2
+        bg-white shadow-lg z-50
+        overflow-y-auto no-scrollbar
+        transition-all duration-300 ease-in-out
+        ${getSidebarWidth()}
+        ${isMobile ? '' : 'translate-x-0'}
+      `}>
+        <div className="px-2 mb-2">
+          <ul>
+            {renderMenuItems([
+              { icon: <FaHome size={20} />, text: "Home", path: "/" },
+              { icon: <FaFire size={20} />, text: "Shorts", path: "/shorts" },
+              { icon: <FaVideo size={20} />, text: "Video", path: "/video" },
+              { icon: <MdLiveTv size={20} />, text: "Live", path: "/live" }
+            ])}
+          </ul>
 
-          <Link to="/">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaVideo size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Video</span>
-            </li>
-          </Link>
+          {shouldShowText() && (
+            <>
+              <h1 className="font-bold my-4 mx-4">Subscriptions</h1>
+              <ul>
+                {renderMenuItems([
+                  { icon: <FaFilm size={20} />, text: "Movie", path: "/movie" },
+                  { icon: <MdSportsEsports size={20} />, text: "Sports", path: "/sports" },
+                  { icon: <FaGamepad size={20} />, text: "Gaming", path: "/gaming" },
+                  { icon: <FaThumbsUp size={20} />, text: "Liked Videos", path: "/liked" }
+                ])}
+              </ul>
 
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <MdLiveTv size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Live</span>
-            </li>
-          </Link>
-         
-        </ul>
-
-       <h1 className="font-bold my-4 mx-4">Subscriptions</h1>
-        <ul>
-          {/* Each link is flex row on md+ and flex-col (icon above text) on smaller */}
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaFilm size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Movie</span>
-            </li>
-          </Link>
-
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <MdSportsEsports size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Sports</span>
-            </li>
-          </Link>
-
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaGamepad size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Gaming</span>
-            </li>
-          </Link>
-
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaThumbsUp size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">liked video</span>
-            </li>
-          </Link>
-        </ul>
-
-
-     <h1 className="font-bold mx-4 my-4">Watch later</h1>
-       
-        <ul>
-          {/* Each link is flex row on md+ and flex-col (icon above text) on smaller */}
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaFilm size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Movie</span>
-            </li>
-          </Link>
-
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <MdSportsEsports size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Sports</span>
-            </li>
-          </Link>
-
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaGamepad size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Gaming</span>
-            </li>
-          </Link>
-
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaThumbsUp size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">liked video</span>
-            </li>
-          </Link>
-          <h1 className='font-bold my-4 mx-4 '>Explore</h1>
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaNewspaper size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">News</span>
-            </li>
-          </Link>
-          
-          <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <MdSchool size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">courses</span>
-            </li>
-          </Link>
-           <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaFire size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">Trending</span>
-            </li>
-          </Link>
-           <Link to="">
-            <li className="flex flex-col items-center md:flex-row md:items-center py-2 hover:bg-gray-200 rounded-md cursor-pointer px-4">
-              <FaPodcast size={24} className="mb-1 md:mb-0 md:mr-6" />
-              <span className="font-roboto font-normal leading-5 text-black">podcast</span>
-            </li>
-          </Link>
-         
-        </ul>
+              <h1 className="font-bold my-4 mx-4">Explore</h1>
+              <ul>
+                {renderMenuItems([
+                  { icon: <FaNewspaper size={20} />, text: "News", path: "/news" },
+                  { icon: <MdSchool size={20} />, text: "Courses", path: "/courses" },
+                  { icon: <FaFire size={20} />, text: "Trending", path: "/trending" },
+                  { icon: <FaPodcast size={20} />, text: "Podcast", path: "/podcast" }
+                ])}
+              </ul>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
 export default SideBar;
-

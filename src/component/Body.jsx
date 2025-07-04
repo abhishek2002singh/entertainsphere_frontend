@@ -23,7 +23,7 @@ const Body = () => {
 
             {/* Page content */}
             <div className="flex-1 h-screen overflow-auto no-scrollbar ">
-            <Outlet />
+               <Outlet />
             </div>
       </div>
 
