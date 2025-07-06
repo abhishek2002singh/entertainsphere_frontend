@@ -273,7 +273,7 @@ const ShortsCard = ({ short, active, isMuted, setIsMuted }) => {
     <div className="relative h-screen w-full bg-white overflow-hidden flex justify-center items-center">
       {/* === Video Section === */}
       <div
-        className="relative w-full sm:w-[40%] md:w-[30%] h-full mx-auto cursor-pointer z-10"
+        className="relative w-full sm:w-[40%] md:w-[30%] h-full mx-auto  z-10"
         onClick={toggleMute}
       >
         <video
@@ -307,9 +307,20 @@ const ShortsCard = ({ short, active, isMuted, setIsMuted }) => {
         </div>
 
         {/* Info */}
-        <div className="absolute bottom-24 left-5 z-20 text-white w-[90%]">
-          <h3 className="text-lg font-bold">{short.title || "No Title"}</h3>
-          <p className="text-sm text-gray-300">{short.description || "Unknown Channel"}</p>
+        <div className="absolute bottom-24 left-5 z-40 text-white w-[90%]">
+          <div className="flex gap-1 items-center cursor-pointer w-fit p-1  ">
+            <button className="cursor-pointer">
+              <img 
+                src={short.userId.photoUrl}
+                alt="User"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-yellow-400 object-cover"
+              />
+            </button>
+          <h3 className="text-lg font-bold">{short.userId.firstName|| "No Title"} {short.userId.lastName}</h3>
+
+          </div>
+           
+          <p className="text-sm ml-1 mt-1 text-gray-300">{short.description || "Unknown Channel"}</p>
         </div>
       </div>
 
