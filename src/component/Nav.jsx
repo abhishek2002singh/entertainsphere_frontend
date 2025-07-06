@@ -20,6 +20,8 @@ const[showSuggestions,setShowSuggestions]=useState(false);
 const searchCache = useSelector((store)=>store.search)
 
 const user = useSelector((store) => store.user);
+console.log("Redux user:", user);
+
 const theme = useSelector((store) => store.theme.theme); 
 const dispatch = useDispatch();
 const navigate = useNavigate();
@@ -298,7 +300,7 @@ const togglemenuhandler=()=>{
               )}
             </button>
             <button onClick={toggleMenu}>
-              <img
+              <img 
                 src={user?.user?.photoUrl || user?.photoUrl || "https://via.placeholder.com/40"}
                 alt="User"
                 className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-yellow-400 object-cover"
@@ -352,7 +354,7 @@ const togglemenuhandler=()=>{
           <div
             className={`${
               theme === "dark" ? "bg-black text-white" : "bg-white text-black"
-            } sm:hidden absolute right-0 top-full w-48 shadow-xl rounded-bl-lg border-l border-b border-yellow-400 z-50`}
+            }  absolute right-0 top-full w-48 shadow-xl rounded-bl-lg border-l border-b border-yellow-400 z-50`}
           >
             <div className="flex flex-col items-start p-2 gap-2">
               <Link
