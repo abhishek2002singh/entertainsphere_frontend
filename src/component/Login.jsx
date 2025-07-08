@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import axios, { formToJSON } from "axios";
- import { useDispatch } from "react-redux";
- import { addUser } from "../utils/userSlice";
- import {setUserPresentTrue , setToken} from '../utils/checkLogin'
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+import { setUserPresentTrue, setToken } from "../utils/checkLogin";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/Constant";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Shimmer from "../shimmer/Shimmer";
+import SignInGoggle from "./SignInGoggle";
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -16,17 +17,20 @@ const Login = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false)
-   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Validation function
   const checkValidationData = (email, password) => {
-    const isEmailValid = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(email);
-    const isPasswordValid = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(password);
+    const isEmailValid =
+      /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(email);
+    const isPasswordValid =
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(password);
 
     if (!isEmailValid) return "Email is not valid";
-    if (!isPasswordValid) return "Password must contain at least 8 characters, including uppercase, lowercase, special characters, and numbers. Example -- Seth@1234";
+    if (!isPasswordValid)
+      return "Password must contain at least 8 characters, including uppercase, lowercase, special characters, and numbers. Example -- Seth@1234";
     return null;
   };
   const handleLogin = async () => {
@@ -47,7 +51,7 @@ const Login = () => {
         { withCredentials: true }
       );
 
-    //   dispatch(addUser(res.data));
+      //   dispatch(addUser(res.data));
       toast.success("Login successful!");
       dispatch(addUser(res.data));
       dispatch(setUserPresentTrue());
@@ -81,7 +85,7 @@ const Login = () => {
         { withCredentials: true }
       );
 
-    //   dispatch(addUser(res.data.data));
+      //   dispatch(addUser(res.data.data));
       toast.success("Signup successful!");
       dispatch(addUser(res));
       dispatch(setUserPresentTrue());
@@ -124,9 +128,13 @@ const Login = () => {
         {/* Form Section */}
         <div className="md:w-1/2 w-full px-6 md:px-10 mt-10 md:mt-0">
           <div className="text-center md:text-left mb-8">
-            <h2 className="text-3xl font-bold">{isSignup ? "Register" : "Log In"}</h2>
+            <h2 className="text-3xl font-bold">
+              {isSignup ? "Register" : "Log In"}
+            </h2>
             <p className="text-sm text-gray-400">
-              {isSignup ? "Welcome! Please create your account." : "Welcome back, please log in."}
+              {isSignup
+                ? "Welcome! Please create your account."
+                : "Welcome back, please log in."}
             </p>
           </div>
 
@@ -174,23 +182,27 @@ const Login = () => {
           >
             {isLoading ? "Processing..." : isSignup ? "Sign Up" : "Login"}
           </button>
+          <div className="flex flex-col  ">
+            <p className="mt-4 text-center">
+              {isSignup ? "Existing User?" : "New User?"}{" "}
+              <button
+                onClick={() => setIsSignup(!isSignup)}
+                className="text-blue-400 hover:text-blue-300 font-semibold"
+                disabled={isLoading} // Disable button while loading
+              >
+                {isSignup ? "Log In Here" : "Sign Up"}
+              </button>
+            
+            </p>
+           <SignInGoggle/>
+          </div>
 
-          <p className="mt-4 text-center">
-            {isSignup ? "Existing User?" : "New User?"}{" "}
-            <button
-              onClick={() => setIsSignup(!isSignup)}
-              className="text-blue-400 hover:text-blue-300 font-semibold"
-              disabled={isLoading} // Disable button while loading
-            >
-              {isSignup ? "Log In Here" : "Sign Up"}
-            </button>
-          </p>
-          <Link to='/otp'>
-            <button
-              className="text-white p-3"
-              disabled={isLoading}
-            >
-              Forgot Password? <span className="text-blue-700 font-bold hover:bg-green-600 rounded transition duration-300 m-3 p-3">Click Here</span>
+          <Link to="/otp">
+            <button className="text-white p-3" disabled={isLoading}>
+              Forgot Password?{" "}
+              <span className="text-blue-700 font-bold hover:bg-green-600 rounded transition duration-300 m-3 p-3">
+                Click Here
+              </span>
             </button>
           </Link>
         </div>

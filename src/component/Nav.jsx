@@ -20,6 +20,8 @@ const[showSuggestions,setShowSuggestions]=useState(false);
 const searchCache = useSelector((store)=>store.search)
 
 const user = useSelector((store) => store.user);
+console.log("Redux user:", user);
+
 const theme = useSelector((store) => store.theme.theme); 
 const dispatch = useDispatch();
 const navigate = useNavigate();
@@ -284,7 +286,99 @@ const togglemenuhandler=()=>{
                     </ul>
                 </div>
             )}
+
         </div>
+
+
+          </div>
+
+          {/* Right section - Theme & Profile */}
+          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+            <button
+              onClick={handleThemeToggle}
+              className="text-xl"
+              aria-label="Toggle Theme"
+            >
+              {theme === "dark" ? (
+                <FaSun className="text-yellow-400" />
+              ) : (
+                <FaMoon className="text-gray-800" />
+              )}
+            </button>
+            <button onClick={toggleMenu}>
+              <img 
+                src={user?.user?.photoUrl || user?.photoUrl || "https://via.placeholder.com/40"}
+                alt="User"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-yellow-400 object-cover"
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Search Bar - appears below nav */}
+        <div className="sm:hidden px-4 pb-3">
+          <div className="flex">
+            <input
+              type="text"
+              placeholder="Search......"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setShowSuggestions(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && searchQuery.trim() !== '') {
+                  setShowSuggestions(false);
+                  navigate(`/app/results?q=${searchQuery}`);
+                }
+              }}
+              className="w-full border border-gray-300 pl-4 p-2 rounded-l-full bg-white text-black"
+            />
+            <button className="bg-gray-200 px-4 text-white flex items-center justify-center py-2.5 rounded-r-full border border-gray-300 hover:bg-pink-200">
+              <IoIosSearch size={20} className="text-black"/>
+            </button>
+          </div>
+          {showSuggestions && (
+            <div className='absolute bg-white py-2 px-2 w-[calc(100%-3rem)] shadow-lg rounded-lg border border-gray-100 text-black z-50'>
+              <ul>
+                {suggestion.map((s) => (
+                  <li 
+                    key={s} 
+                    className='flex items-center gap-2 py-2 px-3 shadow-sm hover:bg-gray-100'
+                    onMouseDown={() => navigate(`/app/results?q=${s}`)}
+                  >
+                    <FaSearch size={16} className='text-gray-300'/> 
+                    <span className="truncate">{s}</span>
+                  </li>
+                ))}  
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Dropdown Menu */}
+        {isOpen && (
+          <div
+            className={`${
+              theme === "dark" ? "bg-black text-white" : "bg-white text-black"
+            }  absolute right-0 top-full w-48 shadow-xl rounded-bl-lg border-l border-b border-yellow-400 z-50`}
+          >
+            <div className="flex flex-col items-start p-2 gap-2">
+              <Link
+                to="/about"
+                className="w-full py-2 px-4 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
+              >
+                About
+              </Link>
+              {/* Other menu items */}
+              <button
+                onClick={handleLogOut}
+                className="w-full text-left py-2 px-4 bg-red-600 hover:bg-red-700 rounded-md text-white transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
 
       </nav>
 
