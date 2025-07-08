@@ -8,7 +8,7 @@ import { BASE_URL } from "../utils/Constant";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Shimmer from "../shimmer/Shimmer";
-import SignInGoggle from "./SignInGoggle";
+
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -194,7 +194,7 @@ const Login = () => {
               </button>
             
             </p>
-           <SignInGoggle/>
+           
           </div>
 
           <Link to="/otp">
