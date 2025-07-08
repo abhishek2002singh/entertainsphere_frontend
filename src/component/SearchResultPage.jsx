@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import {
   YOUTUBE_SEARCH_RESULTS_API,
   YOUTUBE_CHANNEL_API,
@@ -12,10 +12,23 @@ const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q');
 
+  const data = useLocation().search;
+  const originalData = data.split("=")[1].split("%20").join(" ")
+
+  
+
+  //console.log("my data is" , originalData)
+
+  if (!query===originalData) {
+    
+    setVideos([])
+  }
+
   const [videos, setVideos] = useState([]);
   const [channelThumbnails, setChannelThumbnails] = useState({});
   const [videoViewCounts, setVideoViewCounts] = useState({});
   const [videoDurations, setVideoDurations] = useState({});
+  
 
   useEffect(() => {
     getSearchResults();
@@ -25,7 +38,7 @@ const SearchResultsPage = () => {
     try {
       const res = await fetch(`${YOUTUBE_SEARCH_RESULTS_API}&q=${query}`);
       const data = await res.json();
-
+      console.log(data)
       if (!data.items || !Array.isArray(data.items)) {
         console.error("API Error:", data.error?.message || "Unknown error");
         setVideos([]);
@@ -37,13 +50,15 @@ const SearchResultsPage = () => {
       setVideos(onlyVideoItems);
 
       const videoIds = onlyVideoItems.map((item) => item.id.videoId).join(',');
+      //console.log("my video id is ",videoIds);
       const channelIds = [...new Set(onlyVideoItems.map(item => item.snippet.channelId))].join(',');
 
       // Fetch video stats (view count & duration)
       if (videoIds.length > 0) {
-        const videoRes = await fetch(YOUTUBE_VIDEO_DETAILS_API(videoIds));
-        const videoData = await videoRes.json();
+        const videoRes = await fetch(`${YOUTUBE_VIDEO_DETAILS_API}&id=${videoIds}`);
 
+        const videoData = await videoRes.json();
+        console.log(videoData.items)
         const viewsMap = {};
         const durationMap = {};
         videoData.items.forEach(video => {
@@ -56,7 +71,7 @@ const SearchResultsPage = () => {
 
       // Fetch channel thumbnails
       if (channelIds.length > 0) {
-        const channelRes = await fetch(YOUTUBE_CHANNEL_API(channelIds));
+        const channelRes = await fetch(`${YOUTUBE_CHANNEL_API}&id=${channelIds}`);
         const channelData = await channelRes.json();
 
         const thumbnailsMap = {};

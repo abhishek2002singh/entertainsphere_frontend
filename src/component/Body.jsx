@@ -17,12 +17,11 @@ const Body = () => {
          <Nav />
 
       {/* Main content area below Nav */}
-      <div className="flex mt-16  overflow-hidden">
-            {/* Sidebar */}
-            <SideBar />
+      <div className="flex mt-16  ">
+          <   SideBar />
 
             {/* Page content */}
-            <div className="flex-1 h-screen overflow-auto no-scrollbar ">
+            <div className="flex-1 min-h-screen  overflow-auto  no-scrollbar ">
                <Outlet />
             </div>
       </div>

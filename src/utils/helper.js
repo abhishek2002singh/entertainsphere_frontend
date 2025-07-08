@@ -6,17 +6,22 @@ export const formatViews = (views) => {
 };
  
 export const formatDuration = (isoDuration) => {
-  const match = isoDuration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-  const hours = (match[1] || '0H').slice(0, -1);
-  const minutes = (match[2] || '0M').slice(0, -1);
-  const seconds = (match[3] || '0S').slice(0, -1);
+  if (!isoDuration || typeof isoDuration !== "string") return "0:00";
 
-  const h = parseInt(hours);
-  const m = parseInt(minutes);
-  const s = parseInt(seconds);
+  const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return "0:00";
 
-  if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  else return `${m}:${s.toString().padStart(2, '0')}`;
+  const hours = parseInt(match[1] || "0", 10);
+  const minutes = parseInt(match[2] || "0", 10);
+  const seconds = parseInt(match[3] || "0", 10);
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+  }
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
 
 export const formatTimeAgo = (dateStr) => {
