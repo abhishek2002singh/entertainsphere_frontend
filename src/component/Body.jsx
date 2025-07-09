@@ -18,7 +18,7 @@ const Body = () => {
 
       {/* Main content area below Nav */}
       <div className="flex mt-16  ">
-          <   SideBar />
+          <SideBar />
 
             {/* Page content */}
             <div className="flex-1 min-h-screen  overflow-auto  no-scrollbar ">

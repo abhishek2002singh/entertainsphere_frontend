@@ -29,9 +29,9 @@ const SideBar = () => {
   }, [dispatch, isMenuOpen]);
 
   const getSidebarStyle = () => {
-    if (isMobile) return isMenuOpen ? 'w-56 translate-x-0' : '-translate-x-full';
+    if (isMobile) return isMenuOpen ? 'translate-x-0 w-56' : '-translate-x-full';
     if (isMedium) return isMenuOpen ? 'w-56 z-30 bg-white' : 'w-14';
-    if (isDesktop) return isMenuOpen ? 'w-35' : 'w-14';
+    if (isDesktop) return isMenuOpen ? 'w-56' : 'w-14';
     return 'w-16';
   };
 
@@ -76,11 +76,7 @@ const SideBar = () => {
             <Link to={path} key={text}>
               <div className={`flex ${shouldShowText ? 'flex-row gap-4' : 'flex-col items-center'} py-2 px-4 hover:bg-gray-200 rounded-md cursor-pointer`}>
                 <span>{icon}</span>
-                {shouldShowText && (
-                  <span className="text-sm ">
-                    {text}
-                  </span>
-                )}
+                {shouldShowText && <span className="text-sm">{text}</span>}
               </div>
             </Link>
           ))}
@@ -91,10 +87,9 @@ const SideBar = () => {
 
   return (
     <>
-      {/* Overlay for mobile & medium when menu is open */}
       {(isMobile || isMedium) && isMenuOpen && (
         <div
-          className="fixed inset-0 z-20"
+          className="fixed inset-0  z-20"
           onClick={() => dispatch(closeMenu())}
         />
       )}
@@ -105,7 +100,7 @@ const SideBar = () => {
         py-2 px-2
         shadow-lg overflow-y-auto no-scrollbar
         transition-all duration-300 ease-in-out
-        bg-white
+        bg-white z-30
         ${getSidebarStyle()}
       `}>
         {renderMenu()}
