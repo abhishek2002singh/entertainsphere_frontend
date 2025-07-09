@@ -16,7 +16,7 @@ const PreNav = () => {
       <Link to="/login">
       <button className="text-sm bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition duration-300">
         Login
-      </button>
+      </button>     
       </Link>
 
     </div>
