@@ -31,7 +31,7 @@ const SideBar = () => {
   const getSidebarStyle = () => {
     if (isMobile) return isMenuOpen ? 'translate-x-0 w-56' : '-translate-x-full';
     if (isMedium) return isMenuOpen ? 'w-56 z-30 bg-white' : 'w-14';
-    if (isDesktop) return isMenuOpen ? 'w-56' : 'w-14';
+    if (isDesktop) return isMenuOpen ? 'w-56' : 'w-0';
     return 'w-16';
   };
 
