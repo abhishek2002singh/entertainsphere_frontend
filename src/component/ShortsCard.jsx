@@ -273,7 +273,7 @@ const ShortsCard = ({ short, active, isMuted, setIsMuted }) => {
     <div className="relative h-screen w-full bg-white overflow-hidden flex justify-center items-center">
       {/* === Video Section === */}
       <div
-        className="relative w-full sm:w-[40%] md:w-[30%] h-full mx-auto  z-10"
+        className="relative w-full sm:w-[60%] md:w-[60%] lg:w-[50%] xl:w-[30%] h-full mx-auto top-1 bottom-2   z-10"
         onClick={toggleMute}
       >
         <video
